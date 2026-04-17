@@ -22,6 +22,19 @@ def _ok() -> bool:
     return True
 
 
+COLUMNS = {
+    'url_hash', 'source_type', 'source_handle', 'source_display_name',
+    'source_tier', 'title', 'content', 'url', 'language', 'published_at',
+    'fetched_at', 'importance_score', 'cluster_id', 'is_representative',
+    'cluster_count', 'cluster_sources', 'ai_summary_zh', 'recommendation_reason',
+}
+
+
+def _normalize(items: list[dict]) -> list[dict]:
+    """统一key集合，过滤掉表中不存在的字段"""
+    return [{k: item.get(k) for k in COLUMNS} for item in items]
+
+
 def insert_items(items: list[dict]) -> int:
     """批量写入news_items，url_hash冲突时忽略（on conflict do nothing）"""
     if not _ok() or not items:
@@ -29,7 +42,7 @@ def insert_items(items: list[dict]) -> int:
     url = f'{SUPABASE_URL}/rest/v1/news_items'
     headers = {**_headers(), 'Prefer': 'resolution=ignore-duplicates,return=minimal'}
     try:
-        resp = requests.post(url, json=items, headers=headers, timeout=30)
+        resp = requests.post(url, json=_normalize(items), headers=headers, timeout=30)
         if resp.status_code in (200, 201):
             logger.info(f'写入Supabase：{len(items)} 条（重复自动跳过）')
             return len(items)

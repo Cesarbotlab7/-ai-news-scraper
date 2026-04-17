@@ -72,7 +72,6 @@ def scrape_top() -> list[dict]:
             'cluster_sources': ['Hacker News'],
             'ai_summary_zh': '',
             'recommendation_reason': '',
-            'hn_score': raw.get('score', 0),
         })
 
     logger.info(f'  → 筛出 {len(items)} 条AI相关')
