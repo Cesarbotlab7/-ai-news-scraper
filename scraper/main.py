@@ -75,7 +75,7 @@ def run(dry_run: bool = False):
         return
 
     # 6. 写入数据库
-    from utils.wx_db import insert_items
+    from utils.supabase_db import insert_items
     inserted = insert_items(new_items)
     logger.info(f'===== 完成，写入 {inserted} 条 =====')
 

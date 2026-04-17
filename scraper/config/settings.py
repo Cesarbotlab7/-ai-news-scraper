@@ -23,8 +23,7 @@ DASHSCOPE_SUMMARY_MODEL = 'qwen-turbo'
 DASHSCOPE_EMBEDDING_MODEL = 'text-embedding-v3'
 
 # 从环境变量读取密钥（GitHub Secrets注入）
-WX_ENV_ID = os.environ.get('WX_ENV_ID', '')
-WX_APPID = os.environ.get('WX_APPID', '')
-WX_APPSECRET = os.environ.get('WX_APPSECRET', '')
+SUPABASE_URL = os.environ.get('SUPABASE_URL', '')
+SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY', '')
 DASHSCOPE_API_KEY = os.environ.get('DASHSCOPE_API_KEY', '')
 JINA_API_KEY = os.environ.get('JINA_API_KEY', '')

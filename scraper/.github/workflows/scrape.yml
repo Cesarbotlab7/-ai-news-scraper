@@ -26,13 +26,15 @@ jobs:
       - name: Install autocli
         run: |
           curl -fsSL https://raw.githubusercontent.com/nashsu/autocli/main/scripts/install.sh | sh
-          autocli --version
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Verify autocli
+        run: autocli --version
 
       - name: Run scraper
         env:
-          WX_ENV_ID: ${{ secrets.WX_ENV_ID }}
-          WX_APPID: ${{ secrets.WX_APPID }}
-          WX_APPSECRET: ${{ secrets.WX_APPSECRET }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
           JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
         run: python main.py

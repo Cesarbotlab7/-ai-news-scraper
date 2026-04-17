@@ -81,7 +81,10 @@ def query_collection(collection: str, where: dict, field: str, limit: int = 1000
         resp = requests.post(_url('databasequery'), json=payload,
                               headers=_headers(), timeout=15)
         data = resp.json()
-        return data.get('data', [])
+        import json as _json
+        raw = data.get('data', [])
+        # TCB databasequery返回的data是JSON字符串列表，需要逐条解析
+        return [_json.loads(r) if isinstance(r, str) else r for r in raw]
     except Exception as e:
         logger.warning(f'查询失败: {e}')
         return []
