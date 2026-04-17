@@ -23,14 +23,6 @@ jobs:
         run: pip install -r requirements.txt
         working-directory: ./scraper
 
-      - name: Install autocli
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/nashsu/autocli/main/scripts/install.sh | sh
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Verify autocli
-        run: autocli --version
-
       - name: Run scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

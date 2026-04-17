@@ -1,19 +1,16 @@
 """
 X账号抓取器
 技术栈：参照 github.com/koffuxu/ai-influence-digest/scripts/scan_x_weekly.py
-原理：autocli google search（批量查询）→ r.jina.ai（推文正文提取）
+原理：s.jina.ai 搜索（批量查询）→ r.jina.ai（推文正文提取）
 绝对禁止使用X API付费接口
 """
 from __future__ import annotations
 
 import datetime as dt
 import hashlib
-import json
 import logging
 import re
-import subprocess
 import time
-from typing import Any
 
 import requests
 
@@ -41,33 +38,40 @@ def _normalize_url(url: str) -> str | None:
     return f'https://x.com/{m.group(1)}/status/{m.group(2)}'
 
 
-# ── Google搜索（autocli）────────────────────────────────────────────────
+# ── Jina.ai 搜索 ─────────────────────────────────────────────────────────
 
-def _autocli_search(query: str, limit: int = 20) -> list[dict[str, Any]]:
-    """调用 autocli google search，返回结果列表"""
-    cmd = ['autocli', 'google', 'search', '-f', 'json', '--limit', str(limit), query]
+def _jina_search(query: str, limit: int = 20) -> list[dict]:
+    """调用 s.jina.ai 搜索，返回结果列表"""
+    headers = {'Accept': 'application/json', 'X-Retain-Images': 'none'}
+    if JINA_API_KEY:
+        headers['Authorization'] = f'Bearer {JINA_API_KEY}'
     try:
-        out = subprocess.check_output(cmd, text=True, stderr=subprocess.STDOUT, timeout=30)
-        data = json.loads(out)
+        resp = requests.get(
+            'https://s.jina.ai/',
+            params={'q': query, 'count': limit},
+            headers=headers,
+            timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        if isinstance(data, dict):
+            return data.get('data', [])
         return data if isinstance(data, list) else []
-    except subprocess.CalledProcessError as e:
-        logger.warning(f'autocli搜索失败: {e.output[:200]}')
-        return []
     except Exception as e:
-        logger.warning(f'autocli异常: {e}')
+        logger.warning(f'Jina搜索失败: {e}')
         return []
 
 
 def _search_batch(handles: list[str], days: int, per_search: int) -> list[str]:
     """
-    将多个账号批量合并为一条Google查询，返回推文URL列表。
+    将多个账号批量合并为一条查询，返回推文URL列表。
     查询格式：(site:x.com/sama/status OR site:x.com/karpathy/status ...) after:YYYY-MM-DD
     """
     after = _days_ago_str(days)
     sites = ' OR '.join(f'site:x.com/{h}/status' for h in handles)
     query = f'({sites}) after:{after}'
 
-    results = _autocli_search(query, limit=per_search)
+    results = _jina_search(query, limit=per_search)
 
     urls = []
     for r in results:
