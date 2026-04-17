@@ -1,0 +1,73 @@
+# 65 top AI sources (X handles)
+# Format: handle,tier,display_name
+# Tier 1=顶级人物 2=顶级机构 3=从业者
+
+# Tier 2: 顶级机构
+OpenAI,2,OpenAI
+AnthropicAI,2,Anthropic
+GoogleDeepMind,2,Google DeepMind
+DeepMind,2,DeepMind
+GoogleAI,2,Google AI
+MetaAI,2,Meta AI
+nvidia,2,NVIDIA
+NVIDIAAI,2,NVIDIA AI
+deepseek_ai,2,DeepSeek
+Alibaba_Qwen,2,Alibaba Qwen
+midjourney,2,Midjourney
+Kimi_Moonshot,2,Kimi
+MiniMax_AI,2,MiniMax
+BytedanceTalk,2,ByteDance Research
+GroqInc,2,Groq
+Hailuo_AI,2,Hailuo AI
+MIT_CSAIL,2,MIT CSAIL
+IBMData,2,IBM
+
+# Tier 1: 顶级人物
+sama,1,Sam Altman
+zuck,1,Mark Zuckerberg
+demishassabis,1,Demis Hassabis
+DarioAmodei,1,Dario Amodei
+karpathy,1,Andrej Karpathy
+ylecun,1,Yann LeCun
+geoffreyhinton,1,Geoffrey Hinton
+ilyasut,1,Ilya Sutskever
+AndrewYNg,1,Andrew Ng
+jeffdean,1,Jeff Dean
+drfeifei,1,Fei-Fei Li
+Thom_Wolf,1,Thomas Wolf
+danielaamodei,1,Daniela Amodei
+gdb,1,Greg Brockman
+elonmusk,1,Elon Musk
+
+# Tier 3: 从业者/影响者
+GaryMarcus,3,Gary Marcus
+JustinLin610,3,Justin Lin
+steipete,3,Peter Steinberger
+ESYudkowsky,3,Eliezer Yudkowsky
+erikbryn,3,Erik Brynjolfsson
+alliekmiller,3,Allie K. Miller
+tunguz,3,Bojan Tunguz
+Ronald_vanLoon,3,Ronald van Loon
+DeepLearn007,3,DeepLearn007
+nigewillson,3,Nigel Wilson
+petitegeek,3,Petite Geek
+YuHelenYu,3,Helen Yu
+TamaraMcCleary,3,Tamara McCleary
+swyx,3,swyx
+joshwoodward,3,Josh Woodward
+kevinweil,3,Kevin Weil
+petergyang,3,Peter Yang
+thenanyu,3,Nancy Yu
+realmadhuguru,3,Madhu Guru
+_catwu,3,Cat Wu
+trq212,3,trq
+amasad,3,Amjad Masad
+rauchg,3,Guillermo Rauch
+alexalbert__,3,Alex Albert
+levie,3,Aaron Levie
+ryolu_,3,Ryo Lu
+mattturck,3,Matt Turck
+zarazhangrui,3,Zara Zhang
+nikunj,3,Nikunj Kothari
+danshipper,3,Dan Shipper
+adityaag,3,Aditya Agarwal

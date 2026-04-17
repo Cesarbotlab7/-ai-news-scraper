@@ -1,0 +1,24 @@
+# RSS订阅列表
+# Format: url,name,tier,language
+# Tier 2=顶级机构 3=权威媒体
+
+# 英文官方博客
+https://openai.com/blog/rss.xml,OpenAI Blog,2,en
+https://www.anthropic.com/rss.xml,Anthropic News,2,en
+https://deepmind.google/blog/rss/,Google DeepMind Blog,2,en
+https://ai.meta.com/blog/rss/,Meta AI Blog,2,en
+https://blogs.nvidia.com/feed/,NVIDIA AI Blog,2,en
+https://blog.google/technology/ai/rss/,Google AI Blog,2,en
+https://www.microsoft.com/en-us/research/feed/,Microsoft Research,2,en
+
+# 英文权威媒体
+https://techcrunch.com/tag/artificial-intelligence/feed/,TechCrunch AI,3,en
+https://www.technologyreview.com/feed/,MIT Technology Review,3,en
+https://www.theverge.com/ai-artificial-intelligence/rss/index.xml,The Verge AI,3,en
+https://feeds.arstechnica.com/arstechnica/technology-lab,Ars Technica,3,en
+https://venturebeat.com/category/ai/feed/,VentureBeat AI,3,en
+
+# 中文权威媒体
+https://www.jiqizhixin.com/rss,机器之心,3,zh
+https://www.qbitai.com/feed,量子位,3,zh
+https://36kr.com/feed,36kr,3,zh

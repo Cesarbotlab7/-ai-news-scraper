@@ -1,0 +1,39 @@
+name: AI News Scraper
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'   # 每3小时执行一次
+  workflow_dispatch:          # 支持手动触发
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+        working-directory: ./scraper
+
+      - name: Install autocli
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/nashsu/autocli/main/scripts/install.sh | sh
+          autocli --version
+
+      - name: Run scraper
+        env:
+          WX_ENV_ID: ${{ secrets.WX_ENV_ID }}
+          WX_APPID: ${{ secrets.WX_APPID }}
+          WX_APPSECRET: ${{ secrets.WX_APPSECRET }}
+          DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+          JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
+        run: python main.py
+        working-directory: ./scraper
