@@ -36,16 +36,26 @@ def _normalize(items: list[dict]) -> list[dict]:
 
 
 def insert_items(items: list[dict]) -> int:
-    """批量写入news_items，url_hash冲突时忽略（on conflict do nothing）"""
+    """批量写入news_items，批次内去重 + 与已有数据冲突时跳过"""
     if not _ok() or not items:
         return 0
-    url = f'{SUPABASE_URL}/rest/v1/news_items'
+
+    # 批次内按url_hash去重
+    seen: set[str] = set()
+    unique = []
+    for item in _normalize(items):
+        h = item.get('url_hash', '')
+        if h and h not in seen:
+            seen.add(h)
+            unique.append(item)
+
+    endpoint = f'{SUPABASE_URL}/rest/v1/news_items'
     headers = {**_headers(), 'Prefer': 'resolution=ignore-duplicates,return=minimal'}
     try:
-        resp = requests.post(url, json=_normalize(items), headers=headers, timeout=30)
+        resp = requests.post(endpoint, json=unique, headers=headers, timeout=30)
         if resp.status_code in (200, 201):
-            logger.info(f'写入Supabase：{len(items)} 条（重复自动跳过）')
-            return len(items)
+            logger.info(f'写入Supabase：{len(unique)} 条（重复自动跳过）')
+            return len(unique)
         logger.warning(f'写入失败 {resp.status_code}: {resp.text[:200]}')
         return 0
     except Exception as e:
