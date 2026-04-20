@@ -61,6 +61,19 @@ describe('getFeedItems', () => {
     const items = await getFeedItems({ limit: 10, offset: 0 })
     expect(items).toEqual([])
   })
+
+  it('filters by source_type when sourceType is provided', async () => {
+    await getFeedItems({ limit: 10, offset: 0, sourceType: 'twitter' })
+    const eqCalls = getMock().eq.mock.calls
+    expect(eqCalls).toContainEqual(['source_type', 'twitter'])
+  })
+
+  it('does not filter by source_type when sourceType is not provided', async () => {
+    await getFeedItems({ limit: 10, offset: 0 })
+    const eqCalls = getMock().eq.mock.calls
+    const sourceTypeCalls = eqCalls.filter((call: unknown[]) => call[0] === 'source_type')
+    expect(sourceTypeCalls).toHaveLength(0)
+  })
 })
 
 describe('getItemByHash', () => {

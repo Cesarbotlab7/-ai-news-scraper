@@ -9,14 +9,22 @@ const supabase = createClient(
 export async function getFeedItems({
   limit,
   offset,
+  sourceType,
 }: {
   limit: number
   offset: number
+  sourceType?: string
 }): Promise<NewsItem[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from('news_items')
     .select('*')
     .eq('is_representative', true)
+
+  if (sourceType) {
+    query = query.eq('source_type', sourceType)
+  }
+
+  const { data, error } = await query
     .order('importance_score', { ascending: false })
     .order('published_at', { ascending: false })
     .range(offset, offset + limit - 1)

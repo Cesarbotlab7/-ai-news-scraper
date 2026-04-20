@@ -22,7 +22,7 @@ export default function RootLayout({
             <span className="text-xs text-gray-400">每3小时更新</span>
           </div>
         </header>
-        <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+        <main className="flex-1 max-w-2xl mx-auto w-full px-3 py-4 sm:px-4 sm:py-6">
           {children}
         </main>
       </body>

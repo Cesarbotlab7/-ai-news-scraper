@@ -60,13 +60,13 @@ export default async function DetailPage({
 
       {siblings.length > 0 && (
         <section className="border-t border-gray-100 pt-4">
-          <p className="text-xs font-medium text-gray-500 mb-3">
-            另有 {siblings.length} 个源也报道了此事件
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+            同一事件的其他报道 ({siblings.length})
           </p>
           <ul className="flex flex-col gap-2">
             {siblings.map((s) => (
-              <li key={s.url_hash} className="flex items-center gap-2 text-sm">
-                <span className="text-gray-700">{s.source_display_name}</span>
+              <li key={s.url_hash} className="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm">
+                <span className="text-gray-700 truncate max-w-[120px] sm:max-w-none">{s.source_display_name}</span>
                 <SourceBadge tier={s.source_tier} />
                 <TimeAgo iso={s.published_at} />
                 {s.url && (
