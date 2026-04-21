@@ -27,6 +27,7 @@ COLUMNS = {
     'source_tier', 'title', 'content', 'url', 'language', 'published_at',
     'fetched_at', 'importance_score', 'cluster_id', 'is_representative',
     'cluster_count', 'cluster_sources', 'ai_summary_zh', 'recommendation_reason',
+    'tags',
 }
 
 
