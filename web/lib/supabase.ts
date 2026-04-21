@@ -10,23 +10,29 @@ export async function getFeedItems({
   limit,
   offset,
   sourceType,
+  sort = 'score',
+  representativeOnly = true,
 }: {
   limit: number
   offset: number
   sourceType?: string
+  sort?: 'score' | 'time'
+  representativeOnly?: boolean
 }): Promise<NewsItem[]> {
-  let query = supabase
-    .from('news_items')
-    .select('*')
-    .eq('is_representative', true)
+  let query = supabase.from('news_items').select('*')
+
+  if (representativeOnly) {
+    query = query.eq('is_representative', true)
+  }
 
   if (sourceType) {
     query = query.eq('source_type', sourceType)
   }
 
+  const primaryOrder = sort === 'time' ? 'published_at' : 'importance_score'
   const { data, error } = await query
-    .order('importance_score', { ascending: false })
-    .order('published_at', { ascending: false })
+    .order(primaryOrder, { ascending: false })
+    .order('fetched_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
   if (error || !data) return []

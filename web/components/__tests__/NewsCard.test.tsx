@@ -40,9 +40,10 @@ describe('NewsCard', () => {
     expect(screen.getByText('GPT-5 will be released this quarter')).toBeInTheDocument()
   })
 
-  it('renders source_display_name', () => {
+  it('renders source_display_name in Chinese when mapping exists', () => {
     render(<NewsCard item={BASE_ITEM} />)
-    expect(screen.getByText('Sam Altman')).toBeInTheDocument()
+    // Sam Altman → 山姆·奥特曼 via sourceNames mapping
+    expect(screen.getByText('山姆·奥特曼')).toBeInTheDocument()
   })
 
   it('renders importance_score via formatScore', () => {
@@ -55,9 +56,10 @@ describe('NewsCard', () => {
     expect(screen.getByText('2小时前')).toBeInTheDocument()
   })
 
-  it('renders SourceBadge with tier label', () => {
+  it('renders source initials badge', () => {
+    // 新设计用首字母徽章替代了 SourceBadge tier 标签
     render(<NewsCard item={BASE_ITEM} />)
-    expect(screen.getByText('顶级人物')).toBeInTheDocument()
+    expect(screen.getByText('SA')).toBeInTheDocument()
   })
 
   it('wraps card in a link to /news/[url_hash]', () => {

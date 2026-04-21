@@ -1,10 +1,31 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { getItemByHash, getClusterSiblings } from '@/lib/supabase'
-import SourceBadge from '@/components/SourceBadge'
 import TimeAgo from '@/components/TimeAgo'
-import { formatScore } from '@/lib/format'
+import { formatScore, stripMarkdown } from '@/lib/format'
+import { formatSourceName } from '@/lib/sourceNames'
 
 export const revalidate = 900
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ url_hash: string }>
+}): Promise<Metadata> {
+  const { url_hash } = await params
+  const item = await getItemByHash(url_hash)
+  if (!item) return {}
+
+  const title = item.title || stripMarkdown(item.content)?.slice(0, 80) || 'AI资讯'
+  const description = item.ai_summary_zh || stripMarkdown(item.content)?.slice(0, 160) || ''
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: 'article' },
+  }
+}
 
 export default async function DetailPage({
   params,
@@ -16,74 +37,106 @@ export default async function DetailPage({
   if (!item) notFound()
 
   const siblings = await getClusterSiblings(item.cluster_id, url_hash)
+  const displayTitle = item.title || stripMarkdown(item.content)?.slice(0, 120) || ''
 
   return (
-    <article className="bg-white rounded-lg border border-gray-200 p-5">
-      <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-        <span className="font-medium text-gray-800">{item.source_display_name}</span>
-        <SourceBadge tier={item.source_tier} />
-        <TimeAgo iso={item.published_at} />
-        <span className="ml-auto font-semibold text-gray-700">{formatScore(item.importance_score)}</span>
-      </div>
+    <div className="px-4 sm:px-10 py-8 max-w-[860px]">
+      <Link
+        href="/"
+        className="inline-flex items-center gap-1.5 text-sm mb-6 transition-colors"
+        style={{ color: 'var(--text-mute)' }}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        返回
+      </Link>
 
-      <h1 className="text-xl font-bold text-gray-900 leading-snug mb-4">
-        {item.title}
-      </h1>
-
-      {item.ai_summary_zh && (
-        <div className="bg-blue-50 rounded p-3 mb-4">
-          <p className="text-sm font-medium text-blue-800 mb-1">摘要</p>
-          <p className="text-sm text-blue-900">{item.ai_summary_zh}</p>
+      <article
+        className="rounded-[14px] overflow-hidden"
+        style={{ background: 'var(--card)', border: '1px solid var(--line-soft)' }}
+      >
+        {/* Header */}
+        <div className="flex items-center gap-2 px-6 pt-5 pb-0 mb-3" style={{ color: 'var(--text-dim)', fontSize: 13 }}>
+          <span className="font-medium" style={{ color: '#e6e9f2' }}>{formatSourceName(item.source_display_name)}</span>
+          <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--text-mute)', flexShrink: 0 }} />
+          <TimeAgo iso={item.published_at ?? item.fetched_at} />
+          <span className="ml-auto font-semibold" style={{ color: '#e6e9f2' }}>{formatScore(item.importance_score)}</span>
         </div>
-      )}
 
-      {item.recommendation_reason && (
-        <p className="text-sm text-gray-500 italic mb-4">推荐理由：{item.recommendation_reason}</p>
-      )}
+        <div className="px-6 pb-2">
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#eef1f8', lineHeight: 1.45, margin: '0 0 16px' }}>
+            {displayTitle}
+          </h1>
 
-      {item.content && (
-        <div className="text-sm text-gray-700 leading-relaxed mb-4 whitespace-pre-wrap">
-          {item.content}
+          {item.ai_summary_zh && (
+            <div
+              className="rounded-lg p-4 mb-4"
+              style={{ background: 'rgba(0,212,170,0.07)', border: '1px solid rgba(0,212,170,0.2)' }}
+            >
+              <p className="text-sm font-semibold mb-1" style={{ color: '#7be8c9' }}>摘要</p>
+              <p className="text-sm" style={{ color: '#b6bfd3' }}>{item.ai_summary_zh}</p>
+            </div>
+          )}
+
+          {item.recommendation_reason && (
+            <p className="text-sm italic mb-4" style={{ color: 'var(--text-dim)' }}>
+              推荐理由：{item.recommendation_reason}
+            </p>
+          )}
+
+          {item.content && (
+            <div className="text-sm leading-relaxed mb-4 whitespace-pre-wrap" style={{ color: '#b6bfd3' }}>
+              {item.content}
+            </div>
+          )}
+
+          {item.url && (
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block text-sm mb-6 hover:underline"
+              style={{ color: 'var(--accent)' }}
+            >
+              查看原文 →
+            </a>
+          )}
         </div>
-      )}
 
-      {item.url && (
-        <a
-          href={item.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block text-sm text-blue-600 hover:underline mb-6"
-        >
-          查看原文 →
-        </a>
-      )}
-
-      {siblings.length > 0 && (
-        <section className="border-t border-gray-100 pt-4">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-            同一事件的其他报道 ({siblings.length})
-          </p>
-          <ul className="flex flex-col gap-2">
-            {siblings.map((s) => (
-              <li key={s.url_hash} className="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm">
-                <span className="text-gray-700 truncate max-w-[120px] sm:max-w-none">{s.source_display_name}</span>
-                <SourceBadge tier={s.source_tier} />
-                <TimeAgo iso={s.published_at} />
-                {s.url && (
-                  <a
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-auto text-blue-500 hover:underline text-xs"
-                  >
-                    原文
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-    </article>
+        {siblings.length > 0 && (
+          <section
+            className="px-6 py-4"
+            style={{ borderTop: '1px solid var(--line-soft)' }}
+          >
+            <p
+              className="text-xs font-semibold uppercase tracking-wide mb-3"
+              style={{ color: 'var(--text-mute)' }}
+            >
+              同一事件的其他报道 ({siblings.length})
+            </p>
+            <ul className="flex flex-col gap-2">
+              {siblings.map((s) => (
+                <li key={s.url_hash} className="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm">
+                  <span style={{ color: '#e6e9f2' }}>{formatSourceName(s.source_display_name)}</span>
+                  <TimeAgo iso={s.published_at ?? s.fetched_at} />
+                  {s.url && (
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-auto text-xs hover:underline"
+                      style={{ color: 'var(--accent)' }}
+                    >
+                      原文
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </article>
+    </div>
   )
 }
