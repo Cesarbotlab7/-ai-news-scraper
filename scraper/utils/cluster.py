@@ -76,7 +76,11 @@ def cluster_items(items: list[dict]) -> list[dict]:
     embeddings = _get_embeddings(texts)
 
     if not any(embeddings):
-        logger.info('embedding为空，跳过聚合')
+        logger.info('embedding为空，跳过聚合，所有条目设为独立代表')
+        for item in items:
+            item.setdefault('is_representative', True)
+            item.setdefault('cluster_id', str(uuid.uuid4())[:8])
+            item.setdefault('cluster_count', 1)
         return items
 
     n = len(items)

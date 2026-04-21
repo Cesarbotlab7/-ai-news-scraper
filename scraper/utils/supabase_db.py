@@ -49,7 +49,7 @@ def insert_items(items: list[dict]) -> int:
             seen.add(h)
             unique.append(item)
 
-    endpoint = f'{SUPABASE_URL}/rest/v1/news_items'
+    endpoint = f'{SUPABASE_URL}/rest/v1/news_items?on_conflict=url_hash'
     headers = {**_headers(), 'Prefer': 'resolution=ignore-duplicates,return=minimal'}
     try:
         resp = requests.post(endpoint, json=unique, headers=headers, timeout=30)
