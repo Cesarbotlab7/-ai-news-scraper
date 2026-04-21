@@ -104,14 +104,16 @@ Twitter 条目两个字段缺失，已在卡片层 fallback：
 ### NewsCard 布局（时间线设计）
 
 ```
-┌──────────┬──────────────────────────────┐
-│ 时间列    │  卡片（Link 到 /news/hash）  │
-│ HH:MM    │  徽章 + 信源名 · LIVE? | 分数│
-│ X小时前  │  标题                        │
-│ │ (rail) │  ai_summary_zh              │
-│ ● (dot)  │  cluster_count 行           │
-│          │  recommendation_reason       │
-└──────────┴──────────────────────────────┘
+┌──────────┬──────────────────────────────────────┐
+│ 时间列    │  卡片（Link 到 /news/hash）          │
+│ HH:MM    │  徽章 + 信源名 · LIVE? | 分数        │
+│ X小时前  │  ai_summary_zh（有值时作主标题h2）   │
+│ │ (rail) │    └─ title（此时作副标题 12.5px）   │
+│ ● (dot)  │  title（ai_summary_zh 为空时作主标题）│
+│          │  tags chips（最多5个，11px 灰色）     │
+│          │  cluster_count 行                    │
+│          │  recommendation_reason（绿色底部条）  │
+└──────────┴──────────────────────────────────────┘
 ```
 
 `isLast` prop 控制 rail（竖线）是否延伸到底部。

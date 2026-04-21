@@ -58,7 +58,7 @@ scrapers/twitter.py    → s.jina.ai搜索 + r.jina.ai正文提取（无需X API
 utils/dedup.py         → url_hash去重，查询Supabase近48h已有内容
 utils/scorer.py        → importance_score = 时效分(0-60) + 来源分(10-40)
 utils/cluster.py       → DashScope text-embedding-v3 向量聚合，相似度>0.85归为同一事件
-utils/ai_summary.py    → 仅对英文推文生成中文摘要+推荐理由（qwen-turbo）
+utils/ai_summary.py    → 对 twitter/hackernews/arxiv 英文内容生成中文摘要+推荐理由+tags（qwen-turbo）
 utils/supabase_db.py   → 写入Supabase（REST API，非supabase-py SDK）
 ```
 
@@ -127,8 +127,10 @@ Tier：1=顶级人物，2=顶级机构，3=从业者/媒体，4=社区（HN/arXi
 | `is_representative` | 前端只展示此字段为true的条目 |
 | `cluster_id` | 同一事件的分组ID |
 | `cluster_count` | 报道同一事件的总条目数（含代表条目自身） |
-| `ai_summary_zh` | 仅英文推文有值 |
+| `ai_summary_zh` | twitter/hn/arxiv 英文内容有值，卡片置顶显示 |
 | `recommendation_reason` | 一句话推荐理由 |
+| `tags` | 3-6个中文标签数组，前端最多展示5个 chips |
+| `cluster_sources` | 同簇条目的 source_handle 数组 |
 | `source_tier` | 1-4，影响importance_score |
 | `title` | Twitter条目为空字符串，需前端降级到content |
 | `published_at` | Twitter条目为null，需前端降级到fetched_at |
@@ -139,5 +141,5 @@ Tier：1=顶级人物，2=顶级机构，3=从业者/媒体，4=社区（HN/arXi
 - **Phase 2** ✅ 数据库Supabase：建表 + 写入验证 + 事件聚合 + AI摘要全流程跑通
 - **Phase 3** ✅ Next.js Web前端MVP：首页信息流 + 详情页，本地跑通
 - **Phase 4** ✅ 功能完善：信源Tab + 事件聚合展示 + 移动端适配，58个测试全绿
-- **Phase 5** ⬜ Web上线：ICP备案（个人主体）+ 自定义域名 + SEO + 部署腾讯云
+- **Phase 5** 🔄 Web上线：部署腾讯云上海 ✅ | ICP备案 ⬜（暂缓） | 自定义域名 ⬜ | SEO ⬜
 - **Phase 6** ⬜ 微信小程序（待个体工商户办理）：WXML前端读Supabase，复用全部后端
