@@ -27,7 +27,7 @@ def _get_embeddings(texts: list[str]) -> list[list[float]]:
         'Content-Type': 'application/json',
     }
     all_embeddings = []
-    batch_size = 25
+    batch_size = 10
     for i in range(0, len(texts), batch_size):
         batch = texts[i:i + batch_size]
         payload = {'model': DASHSCOPE_EMBEDDING_MODEL, 'input': batch}
