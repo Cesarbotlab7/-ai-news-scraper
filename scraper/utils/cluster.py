@@ -40,7 +40,8 @@ def _get_embeddings(texts: list[str]) -> list[list[float]]:
             )]
             all_embeddings.extend(embeddings)
         except Exception as e:
-            logger.warning(f'获取embedding失败: {e}')
+            body = getattr(getattr(e, 'response', None), 'text', '')
+            logger.warning(f'获取embedding失败: {e} | body: {body[:300]}')
             all_embeddings.extend([[] for _ in batch])
 
     return all_embeddings
