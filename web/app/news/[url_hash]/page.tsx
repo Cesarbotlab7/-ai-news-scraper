@@ -17,7 +17,7 @@ export async function generateMetadata({
   const item = await getItemByHash(url_hash)
   if (!item) return {}
 
-  const title = item.title || stripMarkdown(item.content)?.slice(0, 80) || 'AI资讯'
+  const title = item.ai_summary_zh || item.title || stripMarkdown(item.content)?.slice(0, 80) || 'AI资讯'
   const description = item.ai_summary_zh || stripMarkdown(item.content)?.slice(0, 160) || ''
 
   return {
@@ -65,17 +65,28 @@ export default async function DetailPage({
         </div>
 
         <div className="px-6 pb-2">
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#eef1f8', lineHeight: 1.45, margin: '0 0 16px' }}>
-            {displayTitle}
-          </h1>
+          {item.ai_summary_zh ? (
+            <>
+              <h1 style={{ fontSize: 20, fontWeight: 700, color: '#eef1f8', lineHeight: 1.45, margin: '0 0 8px' }}>
+                {item.ai_summary_zh}
+              </h1>
+              <p style={{ fontSize: 13, color: '#6b7592', marginBottom: 16 }}>
+                {displayTitle}
+              </p>
+            </>
+          ) : (
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: '#eef1f8', lineHeight: 1.45, margin: '0 0 16px' }}>
+              {displayTitle}
+            </h1>
+          )}
 
-          {item.ai_summary_zh && (
-            <div
-              className="rounded-lg p-4 mb-4"
-              style={{ background: 'rgba(0,212,170,0.07)', border: '1px solid rgba(0,212,170,0.2)' }}
-            >
-              <p className="text-sm font-semibold mb-1" style={{ color: '#7be8c9' }}>摘要</p>
-              <p className="text-sm" style={{ color: '#b6bfd3' }}>{item.ai_summary_zh}</p>
+          {item.tags && item.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {item.tags.slice(0, 5).map((tag) => (
+                <span key={tag} style={{ padding: '3px 8px', borderRadius: 5, fontSize: 11, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', color: '#8b95ad' }}>
+                  {tag}
+                </span>
+              ))}
             </div>
           )}
 

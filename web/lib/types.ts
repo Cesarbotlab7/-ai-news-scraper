@@ -19,4 +19,5 @@ export interface NewsItem {
   cluster_sources: string[] | null
   ai_summary_zh: string | null
   recommendation_reason: string | null
+  tags: string[] | null
 }

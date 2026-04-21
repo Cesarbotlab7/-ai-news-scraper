@@ -149,22 +149,49 @@ export default function NewsCard({
 
         {/* Body */}
         <div className="px-[18px]">
-          <h2 style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.45, color: '#eef1f8', letterSpacing: '0.005em', margin: '2px 0 8px' }}>
-            {displayTitle}
-          </h2>
-
-          {item.ai_summary_zh && (
-            <p data-testid="summary" style={{ fontSize: 13.5, lineHeight: 1.65, color: '#b6bfd3', marginBottom: 12 }}>
-              {item.ai_summary_zh}
-            </p>
-          )}
-
-          {item.title && !item.ai_summary_zh && item.content && (
-            <p style={{ fontSize: 13.5, lineHeight: 1.65, color: '#b6bfd3', marginBottom: 12 }}>
-              {stripMarkdown(item.content).slice(0, 200)}
-            </p>
+          {item.ai_summary_zh ? (
+            <>
+              <h2 data-testid="summary" style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.45, color: '#eef1f8', letterSpacing: '0.005em', margin: '2px 0 6px' }}>
+                {item.ai_summary_zh}
+              </h2>
+              <p style={{ fontSize: 12.5, lineHeight: 1.55, color: '#6b7592', marginBottom: 10 }}>
+                {displayTitle}
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.45, color: '#eef1f8', letterSpacing: '0.005em', margin: '2px 0 8px' }}>
+                {displayTitle}
+              </h2>
+              {item.title && item.content && (
+                <p style={{ fontSize: 13.5, lineHeight: 1.65, color: '#b6bfd3', marginBottom: 12 }}>
+                  {stripMarkdown(item.content).slice(0, 200)}
+                </p>
+              )}
+            </>
           )}
         </div>
+
+        {/* Tags */}
+        {item.tags && item.tags.length > 0 && (
+          <div className="px-[18px] flex flex-wrap gap-1.5 mb-2">
+            {item.tags.slice(0, 5).map((tag) => (
+              <span
+                key={tag}
+                style={{
+                  padding: '3px 8px',
+                  borderRadius: 5,
+                  fontSize: 11,
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.10)',
+                  color: '#8b95ad',
+                }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Cluster row */}
         {item.cluster_count && item.cluster_count > 1 && (

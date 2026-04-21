@@ -22,6 +22,7 @@ const BASE_ITEM: NewsItem = {
   cluster_sources: null,
   ai_summary_zh: null,
   recommendation_reason: null,
+  tags: null,
 }
 
 describe('NewsCard', () => {
@@ -116,5 +117,34 @@ describe('NewsCard', () => {
     }
     render(<NewsCard item={item} />)
     expect(screen.getByText('1小时前')).toBeInTheDocument()
+  })
+
+  it('renders ai_summary_zh as main heading and original title as secondary text', () => {
+    const item = { ...BASE_ITEM, ai_summary_zh: '奥特曼暗示GPT-5本季度发布' }
+    render(<NewsCard item={item} />)
+    const summary = screen.getByTestId('summary')
+    expect(summary.tagName).toBe('H2')
+    expect(summary).toHaveTextContent('奥特曼暗示GPT-5本季度发布')
+    expect(screen.getByText('GPT-5 will be released this quarter')).toBeInTheDocument()
+  })
+
+  it('renders original title as main heading when ai_summary_zh is null', () => {
+    render(<NewsCard item={BASE_ITEM} />)
+    expect(screen.queryByTestId('summary')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('GPT-5 will be released this quarter')
+  })
+
+  it('renders each tag when tags array is present', () => {
+    const item = { ...BASE_ITEM, tags: ['GPT-5', 'OpenAI', 'LLM'] }
+    render(<NewsCard item={item} />)
+    expect(screen.getByText('GPT-5')).toBeInTheDocument()
+    expect(screen.getByText('OpenAI')).toBeInTheDocument()
+    expect(screen.getByText('LLM')).toBeInTheDocument()
+  })
+
+  it('does not render tags area when tags is null', () => {
+    render(<NewsCard item={BASE_ITEM} />)
+    // BASE_ITEM.tags is null, so no tag chips should appear
+    expect(screen.queryByText('GPT-5')).not.toBeInTheDocument()
   })
 })
