@@ -1,6 +1,7 @@
 """arXiv最新论文抓取器（官方免费API）"""
 import hashlib
 import logging
+import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 import requests
@@ -10,6 +11,37 @@ logger = logging.getLogger(__name__)
 
 ARXIV_API = 'https://export.arxiv.org/api/query'
 NS = {'atom': 'http://www.w3.org/2005/Atom'}
+HEADERS = {
+    'User-Agent': 'AIHotNewsBot/1.0 (https://github.com/Cesarbotlab7/-ai-news-scraper)',
+}
+
+
+def _request_category(params: dict, category: str, retries: int = 3) -> requests.Response | None:
+    """Call arXiv with conservative retries for rate limits and transient failures."""
+    for attempt in range(1, retries + 1):
+        try:
+            resp = requests.get(ARXIV_API, params=params, headers=HEADERS, timeout=30)
+            if resp.status_code in (429, 500, 502, 503, 504) and attempt < retries:
+                wait = 5 * attempt
+                logger.warning(
+                    f'arXiv暂时不可用 {category}: HTTP {resp.status_code}，'
+                    f'{wait}s 后重试 ({attempt}/{retries})'
+                )
+                time.sleep(wait)
+                continue
+            resp.raise_for_status()
+            return resp
+        except requests.RequestException as e:
+            if attempt >= retries:
+                logger.warning(f'arXiv抓取失败 {category}: {e}')
+                return None
+            wait = 5 * attempt
+            logger.warning(
+                f'arXiv请求异常 {category}: {e}，{wait}s 后重试 '
+                f'({attempt}/{retries})'
+            )
+            time.sleep(wait)
+    return None
 
 
 def scrape_category(category: str) -> list[dict]:
@@ -20,11 +52,8 @@ def scrape_category(category: str) -> list[dict]:
         'sortOrder': 'descending',
         'max_results': ARXIV_MAX_RESULTS,
     }
-    try:
-        resp = requests.get(ARXIV_API, params=params, timeout=20)
-        resp.raise_for_status()
-    except Exception as e:
-        logger.warning(f'arXiv抓取失败 {category}: {e}')
+    resp = _request_category(params, category)
+    if resp is None:
         return []
 
     root = ET.fromstring(resp.content)
@@ -74,7 +103,9 @@ def scrape_category(category: str) -> list[dict]:
 
 def scrape_all() -> list[dict]:
     all_items = []
-    for cat in ARXIV_CATEGORIES:
+    for i, cat in enumerate(ARXIV_CATEGORIES):
+        if i > 0:
+            time.sleep(3)
         all_items.extend(scrape_category(cat))
     logger.info(f'arXiv抓取完成，共 {len(all_items)} 篇')
     return all_items

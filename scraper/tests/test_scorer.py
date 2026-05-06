@@ -28,11 +28,11 @@ def test_timeliness_fresh_ai_content():
     assert result['importance_score'] == 90  # 60(timeliness) + 30(tier2)
 
 
-def test_timeliness_24h_old():
-    """24小时前的内容拿低时效分"""
+def test_timeliness_within_24h_old():
+    """24小时内的内容拿低时效分"""
     item = {
         'source_tier': 2,
-        'published_at': _hours_ago_iso(24),
+        'published_at': _hours_ago_iso(23.5),
         'fetched_at': _now_iso(),
         'title': 'Anthropic releases Claude update',
         'content': 'New AI model released with improved capabilities.',

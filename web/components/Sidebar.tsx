@@ -49,9 +49,34 @@ interface NavItemProps {
   href: string
   active: boolean
   count?: number
+  disabled?: boolean
 }
 
-function NavItem({ icon, label, href, active, count }: NavItemProps) {
+function NavItem({ icon, label, href, active, count, disabled = false }: NavItemProps) {
+  if (disabled) {
+    return (
+      <div
+        className="relative flex items-center gap-2.5 px-2.5 py-[9px] my-0.5 rounded-lg text-[13px]"
+        aria-disabled="true"
+        style={{
+          color: 'var(--text-mute)',
+          border: '1px solid transparent',
+          cursor: 'not-allowed',
+          opacity: 0.65,
+        }}
+      >
+        {icon}
+        <span>{label}</span>
+        <span
+          className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+          style={{ background: 'rgba(255,255,255,0.04)', color: 'var(--text-mute)' }}
+        >
+          规划中
+        </span>
+      </div>
+    )
+  }
+
   return (
     <Link
       href={href}
@@ -128,8 +153,8 @@ export default function Sidebar() {
       >
         信源
       </div>
-      <NavItem icon={ICONS.source} label="信源"       href="/?nav=sources"  active={nav === 'sources'} />
-      <NavItem icon={ICONS.plus}   label="信源提报"    href="/?nav=submit"   active={nav === 'submit'} />
+      <NavItem icon={ICONS.source} label="信源"       href="/?nav=sources"  active={nav === 'sources'} disabled />
+      <NavItem icon={ICONS.plus}   label="信源提报"    href="/?nav=submit"   active={nav === 'submit'} disabled />
     </aside>
   )
 }
